@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api")
-class MainController(private var mainService: MainService) {
+class MainController(private val mainService: MainService) {
 
     @GetMapping("test")
     fun test(): String {
