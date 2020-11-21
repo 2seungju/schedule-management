@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest
 
 @Service
 @ConfigurationProperties(prefix = "naver.login")
-class NaverLoginServiceImpl(): NaverLoginService {
+class NaverLoginServiceImpl: NaverLoginService {
     lateinit var clientId: String;
     lateinit var secretKey: String;
     lateinit var callback: String;
@@ -46,23 +46,40 @@ class NaverLoginServiceImpl(): NaverLoginService {
         return BigInteger(130, secureRandom).toString(32);
     }
 
-    override fun checkToken(status: String, authCode: String): OAuth2AccessToken {
+    override fun checkToken(authCode: String): OAuth2AccessToken {
         val oauthService: OAuth20Service = ServiceBuilder(clientId)
                 .apiSecret(secretKey)
                 .build(NaverApi.instance());
 
         val oAuth2AccessToken: OAuth2AccessToken = oauthService.getAccessToken(authCode);
 
+        refreshToken(oAuth2AccessToken.refreshToken);
+        println(oAuth2AccessToken.refreshToken)
         return oAuth2AccessToken;
     }
 
-    override fun fetchUserProfile(oAuth2AccessToken: OAuth2AccessToken): NaverProfileSearch? {
+    override fun fetchUserProfile(oAuth2AccessToken: OAuth2AccessToken): NaverProfileSearch {
         val httpHeaders = HttpHeaders();
         httpHeaders.add("Authorization", oAuth2AccessToken.tokenType + " " + oAuth2AccessToken.accessToken)
 
         val httpEntity: HttpEntity<Any> = HttpEntity(httpHeaders);
         val responseEntity: ResponseEntity<String> = restTemplate.exchange(profileRequestUri, HttpMethod.GET, httpEntity, String::class.java);
 
-        return objectMapper.readValue<NaverProfileSearch>(responseEntity.body?: "");
+        return objectMapper.readValue(responseEntity.body?: "");
+    }
+
+    private fun refreshToken(refreshToken: String) {
+        val oauthService: OAuth20Service = ServiceBuilder(clientId)
+                .apiSecret(secretKey)
+                .build(NaverApi.instance());
+
+        val uri = "https://nid.naver.com/oauth2.0/token?grant_type=refresh_token&client_id=$clientId&client_secret=$secretKey&refresh_token=$refreshToken"
+        val responseEntity: ResponseEntity<String> = restTemplate.exchange(uri, HttpMethod.GET, HttpEntity(""),String::class.java);
+        println(responseEntity.body)
+
+        // TODO 코틀린 버그인지는 확실히 파악이 되지 않지만 api가 정상적으로 작동이 안됨
+//        var oAuth2AccessToken: OAuth2AccessToken? = oauthService.refreshAccessToken(refreshToken);
+
+//        return oAuth2AccessToken;
     }
 }

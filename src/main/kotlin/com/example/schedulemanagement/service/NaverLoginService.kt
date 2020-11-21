@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest
 interface NaverLoginService {
     fun createUri(request: HttpServletRequest): String;
 
-    fun checkToken(status: String, authCode: String): OAuth2AccessToken;
+    fun checkToken(authCode: String): OAuth2AccessToken;
 
-    fun fetchUserProfile(oAuth2AccessToken: OAuth2AccessToken): NaverProfileSearch?;
+    fun fetchUserProfile(oAuth2AccessToken: OAuth2AccessToken): NaverProfileSearch;
 }
