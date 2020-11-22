@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class NaverProfileSearch(
         @JsonProperty("resultcode")
-        val resultcode: String?,
+        val resultCode: String?,
         val message: String?,
         val response: ProfileResponse?
         )

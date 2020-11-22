@@ -36,8 +36,8 @@ class UserController(private val naverLoginService: NaverLoginService) {
 
         val responseEntity: ResponseEntity<Any> = ResponseEntity(HttpStatus.OK);
 
-        val oAuth2AccessToken: OAuth2AccessToken = naverLoginService.checkToken(code);
-        val naverProfileSearch: NaverProfileSearch = naverLoginService.fetchUserProfile(oAuth2AccessToken);
+        val oAuthToken = naverLoginService.fetchToken(code);
+        val naverProfileSearch: NaverProfileSearch = naverLoginService.fetchUserProfile(oAuthToken);
 
         println(naverProfileSearch);
 

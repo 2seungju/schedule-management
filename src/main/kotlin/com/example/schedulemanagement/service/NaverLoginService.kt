@@ -1,13 +1,15 @@
 package com.example.schedulemanagement.service
 
 import com.example.schedulemanagement.model.NaverProfileSearch
+import com.example.schedulemanagement.model.OAuthToken
 import com.github.scribejava.core.model.OAuth2AccessToken
 import javax.servlet.http.HttpServletRequest
 
 interface NaverLoginService {
     fun createUri(request: HttpServletRequest): String;
 
-    fun checkToken(authCode: String): OAuth2AccessToken;
+    fun fetchToken(authCode: String): OAuthToken;
 
-    fun fetchUserProfile(oAuth2AccessToken: OAuth2AccessToken): NaverProfileSearch;
+    fun fetchUserProfile(oAuthToken: OAuthToken): NaverProfileSearch;
+
 }
